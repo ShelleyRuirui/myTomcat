@@ -7,9 +7,9 @@ import java.io.OutputStream;
 
 public class Response {
 
-	private static final int BUFFER_SIZE=1024;
-	Request request;
-	OutputStream output;
+	protected static final int BUFFER_SIZE=1024;
+	protected Request request;
+	protected OutputStream output;
 	
 	public Response(OutputStream output){
 		this.output=output;

@@ -6,8 +6,8 @@ import java.io.InputStream;
 public class Request {
 
 
-	private InputStream input;
-	private String uri;
+	protected InputStream input;
+	protected String uri;
 	
 	public Request(InputStream input){
 		this.input=input;
@@ -35,7 +35,7 @@ public class Request {
 	}
 	
 	//Extract URI from like GET /examples/default.jsp HTTP/1.1
-	private String parseUri(String requestString){
+	protected String parseUri(String requestString){
 		int index1,index2;
 		index1=requestString.indexOf(' ');
 		if(index1!=-1){

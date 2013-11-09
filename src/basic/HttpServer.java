@@ -8,14 +8,18 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+/*
+ * Basic server that hands out static resource or 404 not found
+ */
+
 public class HttpServer {
 
 	public static final String WEB_ROOT=System.getProperty("user.dir")+File.separator+
 			"webroot";
 	
-	private static final String SHUTDOWN_COMMAND="/SHUTDOWN";
+	protected static final String SHUTDOWN_COMMAND="/SHUTDOWN";
 	
-	private boolean shutdown=false;
+	protected boolean shutdown=false;
 	
 	public void await(){
 		ServerSocket serverSocket=null;
@@ -37,12 +41,13 @@ public class HttpServer {
 				input=socket.getInputStream();
 				output=socket.getOutputStream();
 				
-				Request request=new Request(input);
+				Request request=createReq(input);
 				request.parse();
 				
-				Response response=new Response(output);
+				Response response=createRes(output);
 				response.setRequest(request);
-				response.sendStaticResource();
+				
+				dispatch(request,response);
 				
 				socket.close();
 				
@@ -52,6 +57,18 @@ public class HttpServer {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	protected void dispatch(Request req,Response response) throws IOException{
+		response.sendStaticResource();
+	}
+	
+	protected Request createReq(InputStream input){
+		return new Request(input);
+	}
+	
+	protected Response createRes(OutputStream output){
+		return new Response(output);
 	}
 	
 	/**
