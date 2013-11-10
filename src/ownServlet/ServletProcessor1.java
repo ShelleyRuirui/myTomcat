@@ -17,10 +17,17 @@ public class ServletProcessor1 {
 		try{
 			URL[] urls=new URL[1];
 			URLStreamHandler streamHandler=null;
-			File classPath=new File(Constants.WEB_ROOT);
-			String repository=(new URL("file",null,classPath.getCanonicalPath()+File.separator)).toString();
+			File classPath=new File(Constants.SERVLET_CLASS_PATH);
 			
-			urls[0]=new URL(null,repository,streamHandler);
+			//Seems OK if replace the complex way in the book
+//			String repository=(new URL("file",null,classPath.getCanonicalPath()+File.separator)).toString();
+//			String classpathStr=classPath.getCanonicalPath()+File.separator;
+//			System.out.println(classpathStr);
+//			System.out.println("Respository:"+repository);
+//			
+//			urls[0]=new URL(null,repository,streamHandler);
+			
+			urls[0]=new URL("file",null,classPath.getCanonicalPath()+File.separator);
 			loader=new URLClassLoader(urls);
 		}catch(IOException e){
 			e.printStackTrace();
@@ -31,6 +38,7 @@ public class ServletProcessor1 {
 		@SuppressWarnings("rawtypes")
 		Class myClass=null;
 		try{
+			System.out.println("ServletName:"+servletName);
 			myClass=loader.loadClass(servletName);
 		}catch(ClassNotFoundException e){
 			e.printStackTrace();
@@ -42,7 +50,9 @@ public class ServletProcessor1 {
 		
 		try{
 			servlet=(Servlet)myClass.newInstance();
-			servlet.service(req, res);
+			//By using facade, seems service method has no way to access SubRequest
+			RequestFacade requestFacade=new RequestFacade(req);
+			servlet.service(requestFacade, res);
 		}catch(Exception e){
 			e.printStackTrace();
 			res.writer.println(e.toString());
